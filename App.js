@@ -25,11 +25,22 @@ import {
     AntDesign,
     Octicons,
     Entypo,
+    SimpleLineIcons,
 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as Progress from "react-native-progress";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
+const icons = {
+    Clouds: "cloudy",
+    Clear: "day-sunny",
+    Rain: "rain",
+    Atmosphere: "cloudy-gusts",
+    Snow: "snowflake",
+    Drizzle: "rain",
+    Thunderstorm: "lightning",
+};
 
 const chartConfigs = {
     backgroundColor: "#26872a",
@@ -58,12 +69,15 @@ const aerosols = [
     { type: "Botrytis cinerea", accuracy: 91.5 },
 ];
 
+const API_KEY = "544961607c2113d21ab54ce738bff809";
+
 export default function App() {
     const [analysis, setAnalysis] = useState(true);
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
     const [analData, setAnaldata] = useState(null);
     const [aerosData, setAerosdata] = useState(null);
+    const [weather, setWeather] = useState([]);
     const [address, setAddress] = useState("Loading...");
     const [ok, setOk] = useState(true);
     const [analDone, setAnaldone] = useState(false);
@@ -94,8 +108,11 @@ export default function App() {
         setLatitude(latitude);
         setLongitude(longitude);
         setAddress(location[0].formattedAddress);
-        console.log(latitude, longitude);
-        console.log(location);
+        const response = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`
+        );
+        const json = await response.json();
+        setWeather([json]);
     };
     useEffect(() => {
         getLocation();
@@ -286,7 +303,103 @@ export default function App() {
                         )}
                     </View>
                     <View style={styles.weatherBody}>
-                        <Text style={styles.weatherText}>WEATHER</Text>
+                        <Text style={styles.weatherTitle}>WEATHER</Text>
+                        {weather.length === 0 ? (
+                            <ActivityIndicator
+                                color="black"
+                                style={{ marginTop: 170, marginLeft: 170 }}
+                                size="large"
+                            />
+                        ) : (
+                            <>
+                                <View style={styles.weatherTextbody}>
+                                    <View style={styles.weatherIcon}>
+                                        <Text style={styles.temp}>
+                                            {parseFloat(
+                                                weather[0].main.temp
+                                            ).toFixed(1)}
+                                        </Text>
+                                        <Fontisto
+                                            name={
+                                                icons[
+                                                    weather[0].weather[0].main
+                                                ]
+                                            }
+                                            size={68}
+                                            color="black"
+                                        />
+                                    </View>
+                                    <Text style={styles.main}>
+                                        {weather[0].weather[0].main}
+                                    </Text>
+                                    <Text style={styles.description}>
+                                        {weather[0].weather[0].description}
+                                    </Text>
+                                    <Text style={styles.visibility}>
+                                        Visibility: {weather[0].visibility}m
+                                    </Text>
+                                </View>
+                                <View style={styles.envBody}>
+                                    <View style={styles.env}>
+                                        <View style={styles.envTitleBody}>
+                                            <MaterialCommunityIcons
+                                                name="weather-windy"
+                                                size={13}
+                                                color="black"
+                                            />
+                                            <Text> </Text>
+                                            <Text style={styles.envTitle}>
+                                                WIND
+                                            </Text>
+                                        </View>
+                                        <View style={styles.envValueBody}>
+                                            <Text style={styles.envText}>
+                                                {weather[0].wind.speed}
+                                            </Text>
+                                            <Text>MPH</Text>
+                                        </View>
+                                    </View>
+                                    <View style={styles.env}>
+                                        <View style={styles.envTitleBody}>
+                                            <MaterialCommunityIcons
+                                                name="water-percent"
+                                                size={13}
+                                                color="black"
+                                            />
+                                            <Text> </Text>
+                                            <Text style={styles.envTitle}>
+                                                HUMIDITY
+                                            </Text>
+                                        </View>
+                                        <View style={styles.envValueBody}>
+                                            <Text style={styles.envText}>
+                                                {weather[0].main.humidity}
+                                            </Text>
+                                            <Text>%</Text>
+                                        </View>
+                                    </View>
+                                    <View style={styles.env}>
+                                        <View style={styles.envTitleBody}>
+                                            <SimpleLineIcons
+                                                name="speedometer"
+                                                size={13}
+                                                color="black"
+                                            />
+                                            <Text> </Text>
+                                            <Text style={styles.envTitle}>
+                                                PRESSURE
+                                            </Text>
+                                        </View>
+                                        <View style={styles.envValueBody}>
+                                            <Text style={styles.envText}>
+                                                {weather[0].main.pressure}
+                                            </Text>
+                                            <Text>hPa</Text>
+                                        </View>
+                                    </View>
+                                </View>
+                            </>
+                        )}
                     </View>
                 </View>
             )}
