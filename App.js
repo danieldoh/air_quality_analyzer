@@ -51,14 +51,33 @@ const chartStyle = {
     borderRadius: 16,
 };
 
+const aerosols = [
+    { type: "Fiber", accuracy: 93.6 },
+    { type: "Erysiphaceae", accuracy: 92.5 },
+    { type: "Bacillus anthracis", accuracy: 86.5 },
+    { type: "Botrytis cinerea", accuracy: 91.5 },
+];
+
 export default function App() {
     const [analysis, setAnalysis] = useState(true);
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
+    const [analData, setAnaldata] = useState(null);
+    const [aerosData, setAerosdata] = useState(null);
     const [address, setAddress] = useState("Loading...");
     const [ok, setOk] = useState(true);
+    const [analDone, setAnaldone] = useState(false);
     const map = () => setAnalysis(false);
     const stat = () => setAnalysis(true);
+    const runModel = () => {
+        console.log(pieChartData);
+        return pieChartData;
+    };
+    const startAnal = async () => {
+        const modelResult = await runModel();
+        setAnaldata(modelResult);
+        setAerosdata(aerosols);
+    };
 
     const getLocation = async () => {
         const { granted } = await Location.requestForegroundPermissionsAsync();
@@ -81,12 +100,6 @@ export default function App() {
     useEffect(() => {
         getLocation();
     }, []);
-    const aerosols = [
-        { type: "Fiber", accuracy: 93.6 },
-        { type: "Erysiphaceae", accuracy: 92.5 },
-        { type: "Bacillus anthracis", accuracy: 86.5 },
-        { type: "Botrytis cinerea", accuracy: 91.5 },
-    ];
     const [image, setImage] = useState(null);
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -136,7 +149,10 @@ export default function App() {
                             )}
                         </TouchableOpacity>
                         <View style={styles.buttonContainer}>
-                            <TouchableOpacity style={styles.button}>
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={startAnal}
+                            >
                                 <Text style={styles.buttonText}>ANALYSIS</Text>
                             </TouchableOpacity>
                         </View>
@@ -146,53 +162,81 @@ export default function App() {
                             DISTRIBUTION
                         </Text>
                         <View style={styles.distributionBody}>
-                            <Text style={styles.pieTitle}>
-                                Aerosol Distribution
-                            </Text>
-                            <View>
-                                <PieChart
-                                    data={pieChartData}
-                                    width={390}
-                                    height={220}
-                                    accessor="population"
-                                    chartConfig={chartConfigs}
-                                    backgroundColor="#00000000"
-                                    style={chartStyle}
-                                    center={[15, 0]}
+                            {analData ? (
+                                <>
+                                    <Text style={styles.pieTitle}>
+                                        Aerosol Distribution
+                                    </Text>
+                                    <PieChart
+                                        data={analData}
+                                        width={390}
+                                        height={220}
+                                        accessor="population"
+                                        chartConfig={chartConfigs}
+                                        backgroundColor="#00000000"
+                                        style={chartStyle}
+                                        center={[15, 0]}
+                                    />
+                                </>
+                            ) : (
+                                <ActivityIndicator
+                                    color="black"
+                                    style={{
+                                        marginTop: 0,
+                                        marginLeft: 0,
+                                    }}
+                                    size="large"
                                 />
-                            </View>
+                            )}
                         </View>
                     </View>
                     <View style={styles.status}>
                         <Text style={styles.statusTitle}>ACCURACY</Text>
-                        <ScrollView>
-                            {aerosols.map((aerosol, index) => (
-                                <View
-                                    key={index}
-                                    style={styles.statusContainer}
-                                >
-                                    <Text style={styles.aerosolTypeText}>
-                                        {aerosol.type}
-                                    </Text>
-                                    <View style={styles.accuracy}>
-                                        <Progress.Bar
-                                            progress={aerosol.accuracy / 100}
-                                            width={200}
-                                            height={10}
-                                            borderColor="black"
-                                            color="black"
-                                            borderWidth={0}
-                                            unfilledColor="#3A3D4070"
-                                        />
-                                        <Text
-                                            style={styles.aerosolAccuracyText}
-                                        >
-                                            {aerosol.accuracy}%
+                        {aerosData ? (
+                            <ScrollView>
+                                {aerosols.map((aerosol, index) => (
+                                    <View
+                                        key={index}
+                                        style={styles.statusContainer}
+                                    >
+                                        <Text style={styles.aerosolTypeText}>
+                                            {aerosol.type}
                                         </Text>
+                                        <View style={styles.accuracy}>
+                                            <Progress.Bar
+                                                progress={
+                                                    aerosol.accuracy / 100
+                                                }
+                                                width={200}
+                                                height={10}
+                                                borderColor="black"
+                                                color="black"
+                                                borderWidth={0}
+                                                unfilledColor="#3A3D4070"
+                                            />
+                                            <Text
+                                                style={
+                                                    styles.aerosolAccuracyText
+                                                }
+                                            >
+                                                {aerosol.accuracy}%
+                                            </Text>
+                                        </View>
                                     </View>
-                                </View>
-                            ))}
-                        </ScrollView>
+                                ))}
+                            </ScrollView>
+                        ) : (
+                            <View style={styles.statusContainer}>
+                                <ActivityIndicator
+                                    color="black"
+                                    style={{
+                                        marginTop: 20,
+                                        marginLeft: 0,
+                                    }}
+                                    size="large"
+                                />
+                            </View>
+                        )}
                     </View>
                 </View>
             ) : (
