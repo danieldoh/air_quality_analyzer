@@ -283,9 +283,76 @@ export const styles = StyleSheet.create({
         shadowRadius: 2.04,
         elevation: 4,
     },
-    weatherText: {
+    weatherTitle: {
         color: "black",
         fontSize: 25,
         fontWeight: "500",
+    },
+    weatherTextbody: {
+        alignItems: "flex-start",
+        paddingTop: 20,
+        marginTop: 20,
+        height: 190,
+        borderRadius: 10,
+        paddingHorizontal: 10,
+    },
+    weatherIcon: {
+        alignItems: "center",
+        justifyContent: "space-between",
+        flexDirection: "row",
+        width: "100%",
+        marginBottom: 0,
+    },
+    temp: {
+        fontSize: 80,
+        fontWeight: "700",
+    },
+    main: {
+        fontSize: 35,
+        fontWeight: "500",
+        marginBottom: 0,
+    },
+    description: {
+        fontSize: 20,
+        fontWeight: "300",
+    },
+    visibility: {
+        fontSize: 15,
+        fontWeight: "200",
+        marginTop: 20,
+    },
+    envBody: {
+        fontSize: 20,
+        fontWeight: "200",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flexDirection: "row",
+        paddingTop: 60,
+        marginTop: 15,
+        height: 190,
+    },
+    env: {
+        backgroundColor: theme.grey,
+        width: "31%",
+        height: 130,
+        marginRight: 12,
+        paddingTop: 20,
+        paddingHorizontal: 10,
+        borderRadius: 10,
+    },
+    envTitleBody: {
+        alignItems: "flex-start",
+        flexDirection: "row",
+        marginRight: 20,
+    },
+    envTitle: {
+        fontSize: 10,
+    },
+    envText: {
+        fontSize: 30,
+    },
+    envValueBody: {
+        alignItems: "baseline",
+        flexDirection: "row",
     },
 });

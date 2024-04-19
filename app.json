@@ -19,6 +19,13 @@
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
                 "backgroundColor": "#ffffff"
+            },
+            "permissions": ["android.permission.RECORD_AUDIO"],
+            "package": "com.dohman.airqualanalyzer",
+            "config": {
+                "googleMaps": {
+                    "apiKey": "AIzaSyC1km8Hrh-QA2y5-e0nnFBrkA39ry3Pmr4"
+                }
             }
         },
         "web": {
@@ -31,6 +38,11 @@
                     "photosPermission": "The app accesses your photos to let you share them with your friends."
                 }
             ]
-        ]
+        ],
+        "extra": {
+            "eas": {
+                "projectId": "57da4cb0-5a0a-4461-a9c7-0381305dac9b"
+            }
+        }
     }
 }
